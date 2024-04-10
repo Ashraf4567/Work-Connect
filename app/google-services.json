@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "754952743911",
+    "project_id": "work-connect-d354f",
+    "storage_bucket": "work-connect-d354f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754952743911:android:6aae042b5ba7cf0eed2b42",
+        "android_client_info": {
+          "package_name": "com.example.workconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWbODKK193FjvndcL2nbH9BKrT0jDH-Xs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

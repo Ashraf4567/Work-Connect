@@ -1,0 +1,96 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id("kotlin-parcelize")
+    id 'com.google.gms.google-services'
+    id 'com.google.dagger.hilt.android'
+}
+
+android {
+    namespace 'com.example.workconnect'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.workconnect"
+        minSdk 27
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures{
+        viewBinding = true
+        dataBinding = true
+    }
+
+}
+
+dependencies {
+
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.material
+    implementation libs.androidx.activity
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+
+    implementation libs.firebase.messaging
+    implementation libs.firebase.database.ktx
+
+    //coroutines
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
+
+    implementation libs.kotlinx.coroutines.play.services
+
+    //MVVM
+    def lifecycle_version = "2.7.0"
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+
+
+    //fireBase
+    implementation platform('com.google.firebase:firebase-bom:32.8.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    //Auth
+    implementation("com.google.firebase:firebase-auth")
+    //fireStore
+    implementation("com.google.firebase:firebase-firestore")
+    //hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    //swipe to refresh
+    implementation libs.androidx.swiperefreshlayout
+
+    implementation(libs.okhttp)
+
+    implementation libs.retrofit
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+}
