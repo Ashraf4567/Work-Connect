@@ -1,9 +1,10 @@
-package com.example.workconnect
+package com.example.workconnect.ui.Auth
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workconnect.R
 import com.example.workconnect.utils.SingleLiveEvent
 import com.example.workconnect.utils.UiState
 import com.example.workconnect.data.local.SessionManager

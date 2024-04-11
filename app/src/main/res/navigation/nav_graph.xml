@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.workconnect.LoginFragment"
+        android:name="com.example.workconnect.ui.Auth.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -21,32 +21,32 @@
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.example.workconnect.SignupFragment"
+        android:name="com.example.workconnect.ui.Auth.SignupFragment"
         android:label="fragment_signup"
         tools:layout="@layout/fragment_signup" />
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.workconnect.HomeFragment"
+        android:name="com.example.workconnect.ui.tabs.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/projectsFragment"
-        android:name="com.example.workconnect.ProjectsFragment"
+        android:name="com.example.workconnect.ui.tabs.ProjectsFragment"
         android:label="fragment_projects"
         tools:layout="@layout/fragment_projects" />
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.example.workconnect.ChatFragment"
+        android:name="com.example.workconnect.ui.tabs.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.workconnect.ProfileFragment"
+        android:name="com.example.workconnect.ui.tabs.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/managerProfileFragment"
-        android:name="com.example.workconnect.ManagerProfileFragment"
+        android:name="com.example.workconnect.controlPanel.ManagerProfileFragment"
         android:label="fragment_manager_profile"
         tools:layout="@layout/fragment_manager_profile" >
         <action

@@ -1,4 +1,4 @@
-package com.example.workconnect
+package com.example.workconnect.ui.Auth
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

@@ -1,4 +1,4 @@
-package com.example.workconnect
+package com.example.workconnect.controlPanel
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
