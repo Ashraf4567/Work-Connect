@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.example.workconnect.R
 import com.example.workconnect.data.model.Project
 import com.example.workconnect.data.model.Task
+import com.example.workconnect.data.model.TaskCompletionState
 import com.example.workconnect.databinding.FragmentHomeBinding
 import com.example.workconnect.ui.auth.AuthViewModel
 import com.example.workconnect.ui.tabs.projects.ProjectsAdapter
@@ -54,7 +55,7 @@ class HomeFragment : Fragment() {
                     val project = document.toObject(Project::class.java) // Convert document to Project object
                     if (project?.tasks != null) {
                         // Iterate through the tasks of the project
-                        for (task in project.tasks) {
+                        for (task in project.tasks.orEmpty().sortedBy { it?.dateTime }) {
                             // Check if the task's workerName matches the current user's name
                             if (task?.workerName == name) {
                                 if (task != null) {
@@ -81,9 +82,51 @@ class HomeFragment : Fragment() {
         binding.projectsRecycler.adapter = projectsAdapter
         binding.myTasksRecycler.adapter = myTasksAdapter
 
+        myTasksAdapter.onTakeTaskCheckedListener = MyTasksAdapter.OnCheckClickListener { task, position ->
+
+            handleCheckTask(task.id)
+        }
 
         getProjectsList()
     }
+
+    private fun handleCheckTask(id: String?) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection(Project.PROJECTS_COLLECTION_NAME)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result.documents) {
+                    val project = document.toObject(Project::class.java)
+                    if (project?.tasks != null) {
+                        // Find the task with the given ID in the project's task list
+                        val updatedTasks = project.tasks.map { task ->
+                            if (task?.id == id) {
+                                task?.copy(taskCompletionState = TaskCompletionState.COMPLETED.state)
+                            } else {
+                                task
+                            }
+                        }
+                        // Update the project with the modified task list
+                        db.collection(Project.PROJECTS_COLLECTION_NAME)
+                            .document(document.id)
+                            .update("tasks", updatedTasks)
+                            .addOnSuccessListener {
+                                Log.d("handleCheckTask", "Task with ID $id updated successfully.")
+                                // TODO: increase current user points
+                                getCurrentUserTasks(viewModel.sessionManager.getUserData()?.name.toString())
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.w("handleCheckTask", "Error updating document", exception)
+                            }
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("handleCheckTask", "Error getting documents.", exception)
+            }
+    }
+
 
     private fun getProjectsList() {
         val db = FirebaseFirestore.getInstance() // Get Firestore instance

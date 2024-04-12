@@ -1,5 +1,6 @@
 package com.example.workconnect.ui.tabs.home
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ class MyTasksAdapter(var tasksList: MutableList<Task?>?) :
             }
             if (task.taskCompletionState.equals(TaskCompletionState.COMPLETED.state)) {
                 item.checkbox.isChecked = true
+                item.taskTitle.paintFlags = item.taskTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             }
 
             item.executePendingBindings()

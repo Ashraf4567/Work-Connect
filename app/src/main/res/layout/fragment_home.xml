@@ -14,6 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:gravity="center_vertical"
         android:padding="5dp"
+        android:background="@color/colorPrimary"
         >
 
         <ImageView
@@ -28,6 +29,7 @@
             android:text="Work Connect"
             android:paddingStart="15dp"
             android:textSize="20sp"
+            android:textColor="@color/white"
             android:fontFamily="@font/roboto_black"
             />
 
