@@ -2,13 +2,14 @@ package com.example.workconnect
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.workconnect.databinding.ActivityMainBinding
-import com.example.workconnect.ui.Auth.AuthViewModel
+import com.example.workconnect.ui.auth.AuthViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,11 +39,12 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Check if the current destination is the signup or login fragment
             val isSignupOrLogin =
-                destination.id == R.id.loginFragment
+                destination.id == R.id.loginFragment || destination.id == R.id.projectDetailsFragment
+                        ||destination.id == R.id.addTaskFragment
             updateBottomNavBarVisibility(!isSignupOrLogin)
 
         }
-        var isManager: Boolean = false
+        var isManager = false
         viewModel.isManager.observe(this){
             isManager = it
         }
@@ -82,6 +84,16 @@ class MainActivity : AppCompatActivity() {
         } else {
             bottomNavView.visibility = View.GONE
             binding.bottomNavigationView.visibility = View.GONE
+            val container = binding.container
+
+            // Get the layout params of the container
+            val layoutParams = container.layoutParams as ViewGroup.MarginLayoutParams
+
+            // Set bottom margin to 0dp
+            layoutParams.bottomMargin = 0
+
+            // Update the container's layout params
+            container.layoutParams = layoutParams
         }
     }
 }

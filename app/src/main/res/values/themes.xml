@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.WorkConnect" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+         <item name="colorPrimary">@color/colorPrimary</item>
     </style>
 
     <style name="Theme.WorkConnect" parent="Base.Theme.WorkConnect" />
@@ -20,6 +20,12 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">50dp</item>
         <item name="cornerSizeTopRight">50dp</item>
+    </style>
+
+    <style name="DialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
     <style name="CustomCardCorners" parent="@style/Widget.MaterialComponents.CardView">

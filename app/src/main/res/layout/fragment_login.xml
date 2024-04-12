@@ -8,17 +8,18 @@
 
         <variable
             name="vm"
-            type="com.example.workconnect.ui.Auth.AuthViewModel" />
+            type="com.example.workconnect.ui.auth.AuthViewModel" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.Auth.LoginFragment">
+        android:layout_margin="15dp"
+        tools:context=".ui.auth.LoginFragment">
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/container"
+            android:id="@+id/scrollableContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"

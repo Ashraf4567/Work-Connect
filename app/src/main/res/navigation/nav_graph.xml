@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.workconnect.ui.Auth.LoginFragment"
+        android:name="com.example.workconnect.ui.auth.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -21,19 +21,26 @@
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.example.workconnect.ui.Auth.SignupFragment"
+        android:name="com.example.workconnect.ui.auth.SignupFragment"
         android:label="fragment_signup"
         tools:layout="@layout/fragment_signup" />
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.workconnect.ui.tabs.HomeFragment"
+        android:name="com.example.workconnect.ui.tabs.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/projectsFragment"
-        android:name="com.example.workconnect.ui.tabs.ProjectsFragment"
+        android:name="com.example.workconnect.ui.tabs.projects.ProjectsFragment"
         android:label="fragment_projects"
-        tools:layout="@layout/fragment_projects" />
+        tools:layout="@layout/fragment_projects" >
+        <action
+            android:id="@+id/action_projectsFragment_to_createProjectFragment"
+            app:destination="@id/createProjectFragment" />
+        <action
+            android:id="@+id/action_projectsFragment_to_projectDetailsFragment"
+            app:destination="@id/projectDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.workconnect.ui.tabs.ChatFragment"
@@ -68,4 +75,32 @@
         android:name="com.example.workconnect.controlPanel.EmployeesListFragment"
         android:label="fragment_employees_list"
         tools:layout="@layout/fragment_employees_list" />
+    <dialog
+        android:id="@+id/createProjectFragment"
+        android:name="com.example.workconnect.ui.tabs.projects.CreateProjectFragment"
+        android:label="fragment_create_project"
+        tools:layout="@layout/fragment_create_project" />
+    <dialog
+        android:id="@+id/addTaskFragment"
+        android:name="com.example.workconnect.ui.tabs.projects.AddTaskFragment"
+        android:label="fragment_add_task"
+        tools:layout="@layout/fragment_add_task">
+        <argument
+            android:name="project_id"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
+    <fragment
+        android:id="@+id/projectDetailsFragment"
+        android:name="com.example.workconnect.ui.tabs.projects.ProjectDetailsFragment"
+        android:label="fragment_project_details"
+        tools:layout="@layout/fragment_project_details">
+        <argument
+            android:name="project_id"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_projectDetailsFragment_to_addTaskFragment"
+            app:destination="@id/addTaskFragment" />
+    </fragment>
 </navigation>

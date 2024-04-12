@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.workconnect.ui.Auth.AuthViewModel" />
+            type="com.example.workconnect.ui.auth.AuthViewModel" />
 
         <import type="android.view.View" />
 
@@ -16,7 +16,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.Auth.SignupFragment">
+        tools:context=".ui.auth.SignupFragment">
 
         <TextView
             android:id="@+id/header_title"

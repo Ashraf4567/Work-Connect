@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.workconnect.R
 import com.example.workconnect.databinding.FragmentManagerProfileBinding
-import com.example.workconnect.ui.Auth.AuthViewModel
+import com.example.workconnect.ui.auth.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
