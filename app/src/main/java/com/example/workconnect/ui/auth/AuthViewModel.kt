@@ -1,6 +1,5 @@
 package com.example.workconnect.ui.auth
 
-import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +11,6 @@ import com.example.workconnect.data.local.SessionManager
 import com.example.workconnect.data.usersRepo.UsersRepository
 import com.example.workconnect.data.model.User
 import com.example.workconnect.data.network.WebServices
-import com.example.workconnect.data.network.requests.EnrolPerson
 import com.example.workconnect.utils.UserResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
