@@ -86,7 +86,7 @@ class AuthViewModel @Inject constructor(
                 // Check if authentication was successful
                 if (authResult.user != null) {
                     val user = User(name = "Ashraf", email = email.value, id = authResult.user?.uid)
-                    UserProvider.user = user
+
                     getUserData(user.id)
 
                 } else {
@@ -190,6 +190,7 @@ class AuthViewModel @Inject constructor(
                     userLiveData.postValue(user)
                     uiState.postValue(UiState.SUCCESS)
                     sessionManager.saveUserData(user)
+                    UserProvider.user = user
                     checkUserType()
                     state.postValue(UiState.SUCCESS)
                 }
