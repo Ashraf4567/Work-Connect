@@ -21,6 +21,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkConnect"
         tools:targetApi="31">
+
+        <activity
+            android:name=".ui.tabs.chat.chatRoom.ChatRoomActivity"
+            android:exported="false"
+            />
+        <activity
+            android:name=".ui.tabs.chat.addRoom.AddRoomActivity"
+            android:exported="false"
+            />
         <activity
             android:name=".ui.attendance.CheckInActivity"
             android:exported="false" />
