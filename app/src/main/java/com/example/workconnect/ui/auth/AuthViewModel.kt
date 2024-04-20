@@ -11,6 +11,7 @@ import com.example.workconnect.data.local.SessionManager
 import com.example.workconnect.data.usersRepo.UsersRepository
 import com.example.workconnect.data.model.User
 import com.example.workconnect.data.network.WebServices
+import com.example.workconnect.ui.tabs.chat.chatRoom.UserProvider
 import com.example.workconnect.utils.UserResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -85,6 +86,7 @@ class AuthViewModel @Inject constructor(
                 // Check if authentication was successful
                 if (authResult.user != null) {
                     val user = User(name = "Ashraf", email = email.value, id = authResult.user?.uid)
+                    UserProvider.user = user
                     getUserData(user.id)
 
                 } else {
