@@ -1,5 +1,6 @@
 package com.example.workconnect.ui.tabs.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,12 +9,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.workconnect.R
+import com.example.workconnect.controlPanel.AddAccountActivity
 import com.example.workconnect.data.model.Project
 import com.example.workconnect.data.model.Task
 import com.example.workconnect.data.model.TaskCompletionState
 import com.example.workconnect.databinding.FragmentHomeBinding
+import com.example.workconnect.ui.attendance.CheckInActivity
 import com.example.workconnect.ui.auth.AuthViewModel
 import com.example.workconnect.ui.tabs.projects.ProjectsAdapter
+import com.example.workconnect.utils.Constants.Companion.CHECK_IN
+import com.example.workconnect.utils.Constants.Companion.CHECK_OUT
+import com.example.workconnect.utils.Constants.Companion.OPERATION_TYPE
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -85,6 +91,17 @@ class HomeFragment : Fragment() {
         myTasksAdapter.onTakeTaskCheckedListener = MyTasksAdapter.OnCheckClickListener { task, position ->
 
             handleCheckTask(task.id)
+        }
+        binding.checkInIcon.setOnClickListener {
+            val intent = Intent(activity , CheckInActivity::class.java)
+            intent.putExtra(OPERATION_TYPE , CHECK_IN)
+            startActivity(intent)
+        }
+
+        binding.checkOutIcon.setOnClickListener {
+            val intent = Intent(activity , CheckInActivity::class.java)
+            intent.putExtra(OPERATION_TYPE , CHECK_OUT)
+            startActivity(intent)
         }
 
         getProjectsList()

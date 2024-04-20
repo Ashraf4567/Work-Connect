@@ -1,5 +1,6 @@
 package com.example.workconnect.controlPanel
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -66,7 +67,8 @@ class ManagerProfileFragment : Fragment() {
     private fun handleSectionsNavigation(it: String) {
         when (it) {
             "Add Account"->{
-                findNavController().navigate(R.id.action_managerProfileFragment_to_signupFragment)
+                val intent = Intent(activity , AddAccountActivity::class.java)
+                startActivity(intent)
             }
             "Employees List"->{
                 findNavController().navigate(R.id.action_managerProfileFragment_to_employeesListFragment)

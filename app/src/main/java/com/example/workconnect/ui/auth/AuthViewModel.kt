@@ -1,5 +1,6 @@
 package com.example.workconnect.ui.auth
 
+import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,8 @@ import com.example.workconnect.utils.UiState
 import com.example.workconnect.data.local.SessionManager
 import com.example.workconnect.data.usersRepo.UsersRepository
 import com.example.workconnect.data.model.User
+import com.example.workconnect.data.network.WebServices
+import com.example.workconnect.data.network.requests.EnrolPerson
 import com.example.workconnect.utils.UserResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +21,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
 
 
@@ -25,7 +35,8 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     val sessionManager: SessionManager,
     val auth: FirebaseAuth,
-    val usersRepository: UsersRepository
+    val usersRepository: UsersRepository,
+    private val webServices: WebServices
 ) : ViewModel() {
 
     val userName = MutableLiveData<String>()
@@ -43,6 +54,8 @@ class AuthViewModel @Inject constructor(
     val state = SingleLiveEvent<UiState>()
     val isManager = MutableLiveData<Boolean>()
     val uiState = SingleLiveEvent<UiState>()
+
+//    var photos : File? = null
 
     fun checkUserType() {
         if (sessionManager.getUserData()?.type.equals(User.MANAGER)) {
@@ -108,6 +121,7 @@ class AuthViewModel @Inject constructor(
                             val userId = task.result.user?.uid
                             val user = User(userId, userName.value, email.value, userType, 0)
                             Log.d("test save data", user.toString())
+
                             addUser(user)
                         } else {
                             // Handle failed account creation
@@ -124,6 +138,47 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
+
+    fun enrolPersonFace(file: File) {
+        isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                val photoPart = MultipartBody.Part.createFormData("photos", file.name, requestFile)
+
+                val namePart = userName.value?.toRequestBody("text/plain".toMediaTypeOrNull())
+                val storePart = "3".toRequestBody("text/plain".toMediaTypeOrNull())
+                val collectionsPart = "persons".toRequestBody("text/plain".toMediaTypeOrNull())
+
+                val res = webServices.enrolPerson(namePart!!, storePart, collectionsPart, photoPart)
+
+                if (res.isSuccessful) {
+                    isLoading.postValue(false)
+                    val responseBody = res.body()
+                    if (responseBody != null) {
+                        // Handle successful response with body
+                        Log.d("response face", "Enrollment successful! Response: ${responseBody}")
+                    } else {
+                        Log.e("response face", "Enrollment successful, but response body is null!")
+                    }
+                } else {
+                    isLoading.postValue(false)
+                    val errorBody = res.errorBody()?.string()
+                    Log.e("response face", "Error: ${res.code()} - $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("response face", "Error: ${e.message}", e)
+                isLoading.postValue(false)
+            }
+        }
+    }
+
+
+
+
+
+
 
     suspend fun getUserData(id: String?) {
         uiState.postValue(UiState.LOADING)
@@ -162,9 +217,10 @@ class AuthViewModel @Inject constructor(
         val result = usersRepository.insertUserToFirestore(user)
         if (result.isFailure) {
             state.postValue(UiState.ERROR)
-
         }
         if (result.isSuccess) {
+
+            //enrolPersonFace()
             state.postValue(UiState.SUCCESS)
             Log.d("test save data", "saved in firestore" + result.isSuccess)
         }
@@ -174,21 +230,21 @@ class AuthViewModel @Inject constructor(
         var isValid = true
         if (userName.value.isNullOrBlank()) {
             //showError
-            userNameError.postValue("من فضلك ادخل الاسم")
+            userNameError.postValue("Please enter name")
             isValid = false
         } else {
             userNameError.postValue(null)
         }
         if (email.value.isNullOrBlank()) {
             //showError
-            emailError.postValue("من فضلك ادخل البريد الالكتروني")
+            emailError.postValue("Please enter your email")
             isValid = false
         } else {
             emailError.postValue(null)
         }
         if (password.value.isNullOrBlank()) {
             //showError
-            passwordError.postValue("من فضلك ادخل كلمه المرور")
+            passwordError.postValue("please enter password")
             isValid = false
         } else {
             passwordError.postValue(null)
@@ -197,7 +253,7 @@ class AuthViewModel @Inject constructor(
             passwordConfirmation.value != password.value
         ) {
             //showError
-            passwordConfirmationError.postValue("كلمات المرور غير متطابقه")
+            passwordConfirmationError.postValue("passwords unmatched")
             isValid = false
         } else {
             passwordConfirmationError.postValue(null)
@@ -210,14 +266,14 @@ class AuthViewModel @Inject constructor(
 
         if (email.value.isNullOrBlank()) {
             //showError
-            emailError.postValue("برجاء ادخال البريد الاليكتروني")
+            emailError.postValue("Please enter your email")
             isValid = false
         } else {
             emailError.postValue(null)
         }
         if (password.value.isNullOrBlank()) {
             //showError
-            passwordError.postValue("ادخل كلمه المرور")
+            passwordError.postValue("please enter the password")
             isValid = false
         } else {
             passwordError.postValue(null)
