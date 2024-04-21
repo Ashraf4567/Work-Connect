@@ -1,39 +1,58 @@
 package com.example.workconnect.ui.attendance
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workconnect.data.local.SessionManager
-import com.example.workconnect.data.model.Attendance
+import com.example.workconnect.data.model.AttendanceHistory
+import com.example.workconnect.data.model.AttendanceRecord
 import com.example.workconnect.data.network.WebServices
 import com.example.workconnect.utils.SingleLiveEvent
 import com.example.workconnect.utils.UiState
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class AttendanceViewModel @Inject constructor(
     val webServices: WebServices,
-    val sessionManager: SessionManager
+    val sessionManager: SessionManager,
+    private val db: FirebaseFirestore
 ): ViewModel() {
 
     val uiState = SingleLiveEvent<UiState>()
 
+    val employeeId = sessionManager.getUserData()?.id.toString()
+
+    val attendanceHistory = MutableLiveData<MutableList<AttendanceHistory>>()
+
+
+    private suspend fun updateAttendanceHistory(employeeId: String, action: String, timestamp: Long) {
+        // Assuming you have a Firestore collection named "attendance_history"
+        db.collection("attendance_history")
+            .document(employeeId)
+            .collection("records")
+            .add(mapOf("action" to action, "timestamp" to timestamp))
+            .await()
+    }
+    // Function to calculate the duration between two timestamps
+    private fun calculateDuration(checkInTime: Long, checkOutTime: Long): Long {
+        return checkOutTime - checkInTime
+    }
 
     fun checkInWithFace(file: File) {
         uiState.postValue(UiState.LOADING)
@@ -51,7 +70,7 @@ class AttendanceViewModel @Inject constructor(
                         uiState.postValue(UiState.ERROR)
                         Log.e("checkIn", "Fail : ${res.body()}")
                     }else{
-                        checkIn(sessionManager.getUserData()?.id.toString())
+                        updateAttendanceHistory(employeeId, "checkIn", System.currentTimeMillis())
                         uiState.postValue(UiState.SUCCESS)
 
                     }
@@ -82,7 +101,7 @@ class AttendanceViewModel @Inject constructor(
                         uiState.postValue(UiState.ERROR)
                         Log.e("checkOut", "Fail : ${res.body()}")
                     }else{
-                        checkOut(sessionManager.getUserData()?.id.toString())
+                        updateAttendanceHistory(employeeId, "checkOut", System.currentTimeMillis())
                         uiState.postValue(UiState.SUCCESS)
 
                     }
@@ -97,76 +116,86 @@ class AttendanceViewModel @Inject constructor(
         }
     }
 
+    fun recognizePersonFace(file: File) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                val photoPart = MultipartBody.Part.createFormData("photo", file.name, requestFile)
 
-    fun checkIn(employeeId: String) {
-        // Use Luxand API (or your face recognition method) to identify employee
-        // ...
+                val collections = "persons".toRequestBody("text/plain".toMediaTypeOrNull())
 
-        // Get current date and time
-        val now = Date()
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val currentDate = formatter.format(now)
+                val res = webServices.recognizePerson(collections , photoPart)
 
-        // Create Attendance object
-        val attendance = Attendance(
-            employeeId = employeeId,
-            date = currentDate,
-            checkInTime = currentDate
-        )
 
-        // Save attendance to Firestore
-        val db = FirebaseFirestore.getInstance()
-        val documentId = "$employeeId${currentDate}"
-        db.collection("attendance").document(documentId).set(attendance)
-            .addOnSuccessListener {
-                // Attendance saved successfully
+                    Log.e("recognizePersonFace", "Response : ${res.body()?.recognizeFaceResponse?.get(0)?.name}")
+
+
+            } catch (e: Exception) {
+                Log.e("response face", "Error: ${e.message}", e)
+                uiState.postValue(UiState.ERROR)
             }
-            .addOnFailureListener { exception ->
-                // Handle saving error
-                Log.e("checkIn", "Error saving attendance: $exception")
-            }
+        }
     }
 
-    fun checkOut(employeeId: String) {
+    fun getAttendanceHistory(id: String?) {
+        uiState.postValue(UiState.LOADING)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // Fetch attendance records from Firestore
+                val querySnapshot = db.collection("attendance_history")
+                    .document(id?:"")
+                    .collection("records")
+                    .orderBy("timestamp")
+                    .get()
+                    .await()
 
-        // Get current date and time
-        val now = Date()
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val currentTime = formatter.format(now)
-
-        // Retrieve existing attendance document for today
-        val db = FirebaseFirestore.getInstance()
-        val documentId = "$employeeId${SimpleDateFormat("yyyy-MM-dd").format(now)}"
-        db.collection("attendance").document(documentId).get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    // Attendance document found, update checkOutTime and calculate duration
-                    val attendance = documentSnapshot.toObject<Attendance>() ?: return@addOnSuccessListener
-
-                    attendance.checkOutTime = currentTime
-                    val checkInTimeInMillis = Date(attendance.checkInTime).time
-                    val checkOutTimeInMillis = Date(currentTime).time
-                    val durationInMinutes = (checkOutTimeInMillis - checkInTimeInMillis) / (1000 * 60)
-                    attendance.durationInMinutes = durationInMinutes
-
-                    // Update document with checkOutTime and duration
-                    db.collection("attendance").document(documentId).set(attendance)
-                        .addOnSuccessListener {
-                            // Attendance updated successfully
-                        }
-                        .addOnFailureListener { exception ->
-                            // Handle updating error
-                            Log.e("checkOut", "Error updating attendance: $exception")
-                        }
-                } else {
-                    // No attendance record for today, handle error (optional)
-                    Log.e("checkOut", "No attendance record found for today")
+                // Process attendance records
+                val records = mutableListOf<AttendanceRecord>()
+                querySnapshot.documents.forEach { document ->
+                    val action = document.getString("action")
+                    val timestamp = document.getLong("timestamp")
+                    if (action != null && timestamp != null) {
+                        records.add(AttendanceRecord(action, timestamp))
+                    }
                 }
+
+                // Calculate durations and format attendance history
+                val formattedAttendanceHistory = mutableListOf<AttendanceHistory>()
+                for (i in 0 until records.size step 2) {
+                    if (i + 1 < records.size) {
+                        val checkInTime = records[i].timestamp
+                        val checkOutTime = records[i + 1].timestamp
+                        val duration = calculateDuration(checkInTime, checkOutTime)
+
+                        val checkInFormatted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(checkInTime))
+                        val checkOutFormatted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(checkOutTime))
+                        val durationFormatted = formatDuration(duration)
+
+                        val attendanceHistory = AttendanceHistory(checkInFormatted, checkOutFormatted, durationFormatted)
+                        formattedAttendanceHistory.add(attendanceHistory)
+                    }
+                }
+                delay(1000)
+                attendanceHistory.postValue(formattedAttendanceHistory)
+                uiState.postValue(UiState.SUCCESS)
+
+                // Log or post the formatted attendance history as needed
+                formattedAttendanceHistory.forEach { Log.d("AttendanceHistory", it.toString()) }
+
+            } catch (e: Exception) {
+                Log.e("getAttendanceHistory", "Error: ${e.message}", e)
+                uiState.postValue(UiState.ERROR)
+                // Handle error
             }
-            .addOnFailureListener { exception ->
-                // Handle error retrieving document
-                Log.e("checkOut", "Error retrieving attendance: $exception")
-            }
+        }
+    }
+
+
+    fun formatDuration(durationMillis: Long): String {
+        val hours = TimeUnit.MILLISECONDS.toHours(durationMillis)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis) % 60
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis) % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
 

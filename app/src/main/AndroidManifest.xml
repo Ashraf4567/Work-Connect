@@ -33,7 +33,7 @@
             android:exported="false"
             />
         <activity
-            android:name=".ui.attendance.CheckInActivity"
+            android:name=".ui.attendance.AttendanceActivity"
             android:exported="false" />
         <activity
             android:name=".controlPanel.AddAccountActivity"

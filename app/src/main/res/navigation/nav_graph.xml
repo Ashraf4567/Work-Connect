@@ -66,7 +66,15 @@
         android:id="@+id/employeesListFragment"
         android:name="com.example.workconnect.controlPanel.EmployeesListFragment"
         android:label="fragment_employees_list"
-        tools:layout="@layout/fragment_employees_list" />
+        tools:layout="@layout/fragment_employees_list" >
+        <argument
+            android:name="employee_Id"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_employeesListFragment_to_attendanceHistoryFragment"
+            app:destination="@id/attendanceHistoryFragment" />
+    </fragment>
     <dialog
         android:id="@+id/createProjectFragment"
         android:name="com.example.workconnect.ui.tabs.projects.CreateProjectFragment"
@@ -95,4 +103,9 @@
             android:id="@+id/action_projectDetailsFragment_to_addTaskFragment"
             app:destination="@id/addTaskFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/attendanceHistoryFragment"
+        android:name="com.example.workconnect.ui.attendance.AttendanceHistoryFragment"
+        android:label="fragment_attendance_history"
+        tools:layout="@layout/fragment_attendance_history" />
 </navigation>

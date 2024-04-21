@@ -71,6 +71,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/title_layout"
                         error="@{vm.titleError}"
+                        style="@style/LoginTextInputLayoutStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
@@ -80,7 +81,6 @@
                             android:id="@+id/title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/transparent"
                             android:hint="Title"
                             android:text="@={vm.title}" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -91,13 +91,13 @@
                         error="@{vm.descriptionError}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        style="@style/LoginTextInputLayoutStyle"
                         android:layout_marginBottom="8dp">
 
                         <EditText
                             android:id="@+id/description"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/transparent"
                             android:hint="description"
                             android:lines="4"
                             android:text="@={vm.description}" />

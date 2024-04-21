@@ -18,6 +18,7 @@ class MyTasksAdapter(var tasksList: MutableList<Task?>?) :
 
             if (task.taskCompletionState.equals(TaskCompletionState.IN_PROGRESS.state)) {
                 item.checkbox.isChecked = false
+                item.taskTitle.paintFlags = item.taskTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
             }
             if (task.taskCompletionState.equals(TaskCompletionState.COMPLETED.state)) {
                 item.checkbox.isChecked = true

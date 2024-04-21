@@ -27,10 +27,17 @@ interface WebServices {
     ): Response<CheckInResponse>
 
     @Multipart
-    @POST("attendance/check/in")
+    @POST("attendance/check/out")
     suspend fun checkOut(
         @Part("room") room: RequestBody,
         @Part photo: MultipartBody.Part
     ): Response<CheckInResponse>
+
+    @Multipart
+    @POST("photo/search/v2")
+    suspend fun recognizePerson(
+        @Part("collections") collections: RequestBody,
+        @Part photo: MultipartBody.Part
+    ): Response<RecognizeFaceResponse>
 
 }

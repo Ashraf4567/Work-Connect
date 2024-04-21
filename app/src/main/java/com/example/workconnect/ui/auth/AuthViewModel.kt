@@ -1,6 +1,7 @@
 package com.example.workconnect.ui.auth
 
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +14,9 @@ import com.example.workconnect.data.model.User
 import com.example.workconnect.data.network.WebServices
 import com.example.workconnect.ui.tabs.chat.chatRoom.UserProvider
 import com.example.workconnect.utils.UserResult
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -134,6 +137,33 @@ class AuthViewModel @Inject constructor(
             } finally {
                 isLoading.postValue(false)
             }
+        }
+    }
+
+    fun uploadImageToFirebaseStorage(imageFile: File) {
+        val storage = Firebase.storage
+        val storageRef = storage.reference
+
+        // Create a reference to the image file
+        val imageRef = storageRef.child("images/${System.currentTimeMillis()}")
+
+        // Upload file to Firebase Storage
+        val uploadTask = imageRef.putFile(imageFile.toUri())
+
+        // Listen for upload success/failure
+        uploadTask.addOnSuccessListener { taskSnapshot ->
+            // Image uploaded successfully, get download URL
+            imageRef.downloadUrl.addOnSuccessListener { uri ->
+                val downloadUrl = uri.toString()
+                // Handle the URL (e.g., save it to a database or use it in your app)
+                println("Download URL: $downloadUrl")
+            }.addOnFailureListener {
+                // Failed to retrieve download URL
+                println("Failed to retrieve download URL: ${it.message}")
+            }
+        }.addOnFailureListener { exception ->
+            // Handle unsuccessful uploads
+            println("Upload failed: ${exception.message}")
         }
     }
 

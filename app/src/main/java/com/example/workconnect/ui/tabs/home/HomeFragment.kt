@@ -8,13 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.workconnect.R
-import com.example.workconnect.controlPanel.AddAccountActivity
 import com.example.workconnect.data.model.Project
 import com.example.workconnect.data.model.Task
 import com.example.workconnect.data.model.TaskCompletionState
 import com.example.workconnect.databinding.FragmentHomeBinding
-import com.example.workconnect.ui.attendance.CheckInActivity
+import com.example.workconnect.ui.attendance.AttendanceActivity
 import com.example.workconnect.ui.auth.AuthViewModel
 import com.example.workconnect.ui.tabs.projects.ProjectsAdapter
 import com.example.workconnect.utils.Constants.Companion.CHECK_IN
@@ -93,13 +91,13 @@ class HomeFragment : Fragment() {
             handleCheckTask(task.id)
         }
         binding.checkInIcon.setOnClickListener {
-            val intent = Intent(activity , CheckInActivity::class.java)
+            val intent = Intent(activity , AttendanceActivity::class.java)
             intent.putExtra(OPERATION_TYPE , CHECK_IN)
             startActivity(intent)
         }
 
         binding.checkOutIcon.setOnClickListener {
-            val intent = Intent(activity , CheckInActivity::class.java)
+            val intent = Intent(activity , AttendanceActivity::class.java)
             intent.putExtra(OPERATION_TYPE , CHECK_OUT)
             startActivity(intent)
         }

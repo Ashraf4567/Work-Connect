@@ -14,11 +14,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
-        app:contentPadding="6dp">
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="#E0F1FF"
+            android:padding="6dp"
+            >
+
+            <ImageView
+                android:id="@+id/employeeImage"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_employee"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <TextView
                 android:id="@+id/employeeName"
@@ -27,7 +39,7 @@
                 android:text="@{`Name: `+user.name}"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/employeeImage"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Name: Ahmed Ali" />
 
@@ -38,7 +50,7 @@
                 android:text="@{`points: `+user.points}"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/employeeImage"
                 app:layout_constraintTop_toBottomOf="@id/employeeName"
                 />
 
@@ -49,7 +61,7 @@
                 android:text="@{`number of completed tasks: `+user.numberOfCompletedTasks}"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/employeeImage"
                 app:layout_constraintTop_toBottomOf="@id/employeePoints"
                  />
 
@@ -60,7 +72,7 @@
                 android:text="@{`Role: `+ user.type}"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/employeeImage"
                 app:layout_constraintTop_toBottomOf="@id/numberOfCompletedTasks"
                 />
 

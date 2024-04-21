@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @AndroidEntryPoint
-class CheckInActivity : AppCompatActivity() {
+class AttendanceActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityCheckInBinding
 
@@ -87,6 +87,8 @@ class CheckInActivity : AppCompatActivity() {
         }
 
         initObservers()
+
+
     }
 
     private fun initObservers() {
@@ -102,13 +104,17 @@ class CheckInActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 binding.successAnim.visibility = View.VISIBLE
                 binding.viewFinder.isVisible = false
+                binding.scannerAnim.visibility = View.GONE
             }
             UiState.LOADING -> {
                 binding.scannerAnim.visibility = View.VISIBLE
+                binding.viewFinder.isVisible = false
             }
             UiState.ERROR -> {
                 val message = if (operationType == CHECK_IN){"Check-in failed"} else{"Check-out failed"}
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                binding.viewFinder.isVisible = true
+                binding.scannerAnim.visibility = View.GONE
             }
         }
     }
@@ -209,10 +215,11 @@ class CheckInActivity : AppCompatActivity() {
 
                     val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                     val outputStream = FileOutputStream(file)
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream) // Adjust quality (1-100)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream) // Adjust quality (1-100)
                     outputStream.close()
 
                     operationType  = intent.getStringExtra(OPERATION_TYPE).toString()
+                    Log.d("operationType",operationType)
                     // Upload the file
                     if (operationType == CHECK_IN){
                         viewModel.checkInWithFace(file)

@@ -30,8 +30,17 @@ class EmployeesAdapter(var employeesList: MutableList<User?>?) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val employee = employeesList!![position]
         holder.bind(employee)
+        onEmployeeClickListener?.let {
+            holder.item.root.setOnClickListener {
+                onEmployeeClickListener!!.onEmployeeClick(employee)
+            }
+        }
     }
 
+    var onEmployeeClickListener: OnEmployeeClickListener? = null
+    fun interface OnEmployeeClickListener {
+        fun onEmployeeClick(employee: User?)
+    }
 
     fun submitList(list: List<User?>?) {
         employeesList = list as MutableList<User?>?

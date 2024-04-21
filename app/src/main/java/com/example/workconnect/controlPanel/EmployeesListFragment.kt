@@ -6,7 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.example.workconnect.R
 import com.example.workconnect.databinding.FragmentEmployeesListBinding
+import com.example.workconnect.utils.Constants.Companion.EMPLOYEE_ID
 import com.example.workconnect.utils.UiState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -63,6 +66,12 @@ class EmployeesListFragment : Fragment() {
     private fun initViews() {
         binding.employeesListRecycler.adapter = adapter
         viewModel.getAllEmployees()
+
+        adapter.onEmployeeClickListener = EmployeesAdapter.OnEmployeeClickListener {employee ->
+            val bundle = Bundle()
+            bundle.putString(EMPLOYEE_ID, employee?.id)
+            findNavController().navigate(R.id.action_employeesListFragment_to_attendanceHistoryFragment , bundle)
+        }
     }
 
 }
