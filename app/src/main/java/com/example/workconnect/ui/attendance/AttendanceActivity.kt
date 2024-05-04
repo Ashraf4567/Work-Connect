@@ -81,6 +81,12 @@ class AttendanceActivity : AppCompatActivity() {
         } else {
             requestPermissions()
         }
+        if (operationType == CHECK_IN){
+            binding.checkInButton.text = "CheckIn"
+        }
+        if (operationType == CHECK_OUT){
+            binding.checkInButton.text = "CheckOut"
+        }
 
         binding.checkInButton.setOnClickListener {
             takePhoto()

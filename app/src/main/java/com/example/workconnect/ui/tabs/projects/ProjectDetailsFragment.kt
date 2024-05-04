@@ -177,6 +177,7 @@ class ProjectDetailsFragment : Fragment() {
     }
 
     private fun getProjectDataById() {
+        binding.progressBar.visibility = View.VISIBLE
         val firestore = FirebaseFirestore.getInstance()
         val projectsRef = firestore.collection(PROJECTS_COLLECTION_NAME)
 
@@ -189,11 +190,13 @@ class ProjectDetailsFragment : Fragment() {
                     val project = document.toObject(Project::class.java)
                     Log.d("test get project" , project.title.toString())
                     bindProjectData(project)
+                    binding.progressBar.visibility = View.GONE
                     // Process the project data
                     // For example, you can access project properties like project.id, project.title, etc.
                 }
             }
             .addOnFailureListener { exception ->
+                binding.progressBar.visibility = View.GONE
                 Log.w("TAG", "Error getting documents: ", exception)
             }
     }

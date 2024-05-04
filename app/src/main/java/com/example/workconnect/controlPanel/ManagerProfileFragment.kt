@@ -24,7 +24,6 @@ class ManagerProfileFragment : Fragment() {
     private val sectionsList =
         listOf(
             "My Account",
-            "Add tasks requests",
             "Employees List",
             "Add Account"
         )
@@ -59,8 +58,12 @@ class ManagerProfileFragment : Fragment() {
             Toast.makeText(requireActivity(), "logout successfully", Toast.LENGTH_LONG).show()
             findNavController().navigate(R.id.action_managerProfileFragment_to_loginFragment)
         }
-        binding.icSendAlert.setOnClickListener {
-            //findNavController().navigate(R.id.action_managerProfileFragment_to_sendNotificationFragment)
+
+        binding.logoutBtn.setOnClickListener {
+            viewModel.auth.signOut()
+            viewModel.sessionManager.logout()
+            Toast.makeText(requireActivity(), "تم تسجيل الخروج", Toast.LENGTH_LONG).show()
+            findNavController().navigate(R.id.action_managerProfileFragment_to_loginFragment)
         }
     }
 
@@ -72,6 +75,10 @@ class ManagerProfileFragment : Fragment() {
             }
             "Employees List"->{
                 findNavController().navigate(R.id.action_managerProfileFragment_to_employeesListFragment)
+            }
+
+            "My Account"->{
+                findNavController().navigate(R.id.action_managerProfileFragment_to_profileFragment)
             }
         }
     }

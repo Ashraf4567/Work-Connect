@@ -104,8 +104,6 @@
                         tools:listitem="@layout/item_tasks_in_project"
                         />
 
-
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
             <ProgressBar

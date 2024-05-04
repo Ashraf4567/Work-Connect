@@ -16,7 +16,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="15dp"
-        tools:context=".ui.auth.LoginFragment">
+        tools:context=".ui.auth.LoginFragment"
+        android:background="@color/white"
+        >
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollableContainer"
@@ -118,8 +120,9 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/loginBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="300dp"
+                        android:layout_height="50dp"
+                        app:cornerRadius="10dp"
                         android:text="Login"
                         android:backgroundTint="@color/colorPrimary"
                         android:textColor="@color/white"

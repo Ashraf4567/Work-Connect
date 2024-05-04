@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.tabs.projects.ProjectsFragment">
+    tools:context=".ui.tabs.projects.ProjectsFragment"
+    android:paddingBottom="70dp"
+    >
 
 
     <androidx.recyclerview.widget.RecyclerView

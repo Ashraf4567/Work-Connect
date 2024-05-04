@@ -45,7 +45,11 @@
         android:id="@+id/profileFragment"
         android:name="com.example.workconnect.ui.tabs.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
     <fragment
         android:id="@+id/managerProfileFragment"
         android:name="com.example.workconnect.controlPanel.ManagerProfileFragment"
@@ -61,6 +65,9 @@
         <action
             android:id="@+id/action_managerProfileFragment_to_employeesListFragment"
             app:destination="@id/employeesListFragment" />
+        <action
+            android:id="@+id/action_managerProfileFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/employeesListFragment"
