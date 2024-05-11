@@ -140,34 +140,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun uploadImageToFirebaseStorage(imageFile: File) {
-        val storage = Firebase.storage
-        val storageRef = storage.reference
-
-        // Create a reference to the image file
-        val imageRef = storageRef.child("images/${System.currentTimeMillis()}")
-
-        // Upload file to Firebase Storage
-        val uploadTask = imageRef.putFile(imageFile.toUri())
-
-        // Listen for upload success/failure
-        uploadTask.addOnSuccessListener { taskSnapshot ->
-            // Image uploaded successfully, get download URL
-            imageRef.downloadUrl.addOnSuccessListener { uri ->
-                val downloadUrl = uri.toString()
-                // Handle the URL (e.g., save it to a database or use it in your app)
-                println("Download URL: $downloadUrl")
-            }.addOnFailureListener {
-                // Failed to retrieve download URL
-                println("Failed to retrieve download URL: ${it.message}")
-            }
-        }.addOnFailureListener { exception ->
-            // Handle unsuccessful uploads
-            println("Upload failed: ${exception.message}")
-        }
-    }
-
-
     fun enrolPersonFace(file: File) {
         isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {

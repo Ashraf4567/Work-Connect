@@ -1,6 +1,7 @@
 package com.example.workconnect.ui.attendance
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -80,12 +81,6 @@ class AttendanceActivity : AppCompatActivity() {
             startCamera()
         } else {
             requestPermissions()
-        }
-        if (operationType == CHECK_IN){
-            binding.checkInButton.text = "CheckIn"
-        }
-        if (operationType == CHECK_OUT){
-            binding.checkInButton.text = "CheckOut"
         }
 
         binding.checkInButton.setOnClickListener {

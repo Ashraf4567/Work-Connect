@@ -24,7 +24,7 @@ class ApiModule {
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor {
-                message -> Log.e("api Log", message ?:"") }
+                message -> Log.d("api Log", message ?:"") }
 
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         return loggingInterceptor

@@ -24,20 +24,14 @@ interface WebServices {
     suspend fun checkIn(
         @Part("room") room: RequestBody,
         @Part photo: MultipartBody.Part
-    ): Response<CheckInResponse>
+    ): CheckInResponse
 
     @Multipart
     @POST("attendance/check/out")
     suspend fun checkOut(
         @Part("room") room: RequestBody,
         @Part photo: MultipartBody.Part
-    ): Response<CheckInResponse>
+    ): CheckoutResponse
 
-    @Multipart
-    @POST("photo/search/v2")
-    suspend fun recognizePerson(
-        @Part("collections") collections: RequestBody,
-        @Part photo: MultipartBody.Part
-    ): Response<RecognizeFaceResponse>
 
 }

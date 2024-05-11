@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import com.example.workconnect.data.model.Project
 import com.example.workconnect.data.model.Task
 import com.example.workconnect.data.model.TaskCompletionState
+import com.example.workconnect.data.model.User
 import com.example.workconnect.databinding.FragmentHomeBinding
 import com.example.workconnect.ui.attendance.AttendanceActivity
 import com.example.workconnect.ui.auth.AuthViewModel
@@ -20,6 +21,7 @@ import com.example.workconnect.utils.Constants.Companion.CHECK_OUT
 import com.example.workconnect.utils.Constants.Companion.OPERATION_TYPE
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -88,7 +90,7 @@ class HomeFragment : Fragment() {
 
         myTasksAdapter.onTakeTaskCheckedListener = MyTasksAdapter.OnCheckClickListener { task, position ->
 
-            handleCheckTask(task.id)
+            handleCheckTask(task.id , task)
         }
         binding.checkInIcon.setOnClickListener {
             val intent = Intent(activity , AttendanceActivity::class.java)
@@ -105,7 +107,7 @@ class HomeFragment : Fragment() {
         getProjectsList()
     }
 
-    private fun handleCheckTask(id: String?) {
+    private fun handleCheckTask(id: String?, task: Task) {
         val db = FirebaseFirestore.getInstance()
 
         db.collection(Project.PROJECTS_COLLECTION_NAME)
@@ -114,7 +116,6 @@ class HomeFragment : Fragment() {
                 for (document in result.documents) {
                     val project = document.toObject(Project::class.java)
                     if (project?.tasks != null) {
-                        // Find the task with the given ID in the project's task list
                         val updatedTasks = project.tasks.map { task ->
                             if (task?.id == id) {
                                 task?.copy(taskCompletionState = TaskCompletionState.COMPLETED.state)
@@ -122,25 +123,47 @@ class HomeFragment : Fragment() {
                                 task
                             }
                         }
-                        // Update the project with the modified task list
+
                         db.collection(Project.PROJECTS_COLLECTION_NAME)
                             .document(document.id)
                             .update("tasks", updatedTasks)
                             .addOnSuccessListener {
                                 Log.d("handleCheckTask", "Task with ID $id updated successfully.")
-                                // TODO: increase current user points
-                                getCurrentUserTasks(viewModel.sessionManager.getUserData()?.name.toString())
+
+                                // Update user points and number of completed tasks
+                                val userId = viewModel.sessionManager.getUserData()?.id
+                                if (userId != null) {
+                                    val userRef = db.collection(User.COLLECTION_NAME).document(userId)
+                                    userRef.get()
+                                        .addOnSuccessListener { userSnapshot ->
+                                            val user = userSnapshot.toObject(User::class.java)
+                                            val updatedPoints = user?.points!!.toInt() + (task.points?.toInt()
+                                                ?: 0)
+                                            val updatedNumberOfCompletedTasks =
+                                                user?.numberOfCompletedTasks?.toInt()?.plus(1)
+                                            userRef.update("points", updatedPoints)
+                                            userRef.update("numberOfCompletedTasks", updatedNumberOfCompletedTasks)
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.e("handleCheckTask", "Error updating user data", exception)
+                                        }
+                                        .addOnCompleteListener {
+                                            // This block ensures that the task is complete before proceeding
+                                            getCurrentUserTasks(viewModel.sessionManager.getUserData()?.name.toString())
+                                        }
+                                }
                             }
                             .addOnFailureListener { exception ->
-                                Log.w("handleCheckTask", "Error updating document", exception)
+                                Log.e("handleCheckTask", "Error updating document", exception)
                             }
                     }
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w("handleCheckTask", "Error getting documents.", exception)
+                Log.e("handleCheckTask", "Error getting documents.", exception)
             }
     }
+
 
 
     private fun getProjectsList() {

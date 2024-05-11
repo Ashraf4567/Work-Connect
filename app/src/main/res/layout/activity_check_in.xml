@@ -55,6 +55,13 @@
         android:fontFamily="@font/roboto_black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:icon="@drawable/ic_camera"
+        android:padding="0dp"
+        app:iconTintMode="multiply"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="30dp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

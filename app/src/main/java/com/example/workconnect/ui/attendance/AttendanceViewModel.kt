@@ -37,6 +37,7 @@ class AttendanceViewModel @Inject constructor(
     val uiState = SingleLiveEvent<UiState>()
 
     val employeeId = sessionManager.getUserData()?.id.toString()
+    val employeeName = sessionManager.getUserData()?.name.toString()
 
     val attendanceHistory = MutableLiveData<MutableList<AttendanceHistory>>()
 
@@ -65,18 +66,20 @@ class AttendanceViewModel @Inject constructor(
 
                 val res = webServices.checkIn(roomPart, photoPart)
 
-                if (res.isSuccessful && res.body()!=null){
-                    if (res.body()!!.status.equals("failure")){
-                        uiState.postValue(UiState.ERROR)
-                        Log.e("checkIn", "Fail : ${res.body()}")
-                    }else{
+                if (res.status.equals("success")){
+                    if (res.checkedIn?.get(0)?.name.equals(employeeName) ){
                         updateAttendanceHistory(employeeId, "checkIn", System.currentTimeMillis())
                         uiState.postValue(UiState.SUCCESS)
-
+                    }else{
+                        uiState.postValue(UiState.ERROR)
+                        Log.e("checkIn", "Fail : ${res.checkedIn?.get(0)?.name}")
+                        Log.e("checkIn", res.toString())
                     }
 
-                    Log.e("checkIn", "Response : ${res.body()!!.status}")
 
+                }else{
+                    uiState.postValue(UiState.ERROR)
+                    Log.e("checkIn", "Fail : ${res.status}")
                 }
             } catch (e: Exception) {
                 Log.e("response face", "Error: ${e.message}", e)
@@ -96,39 +99,14 @@ class AttendanceViewModel @Inject constructor(
 
                 val res = webServices.checkOut(roomPart, photoPart)
 
-                if (res.isSuccessful && res.body()!=null){
-                    if (res.body()!!.status.equals("failure")){
-                        uiState.postValue(UiState.ERROR)
-                        Log.e("checkOut", "Fail : ${res.body()}")
-                    }else{
-                        updateAttendanceHistory(employeeId, "checkOut", System.currentTimeMillis())
-                        uiState.postValue(UiState.SUCCESS)
-
-                    }
-
-                    Log.e("checkOut", "Response : ${res.body()!!.status}")
-
+                if (res.status.equals("success")){
+                    updateAttendanceHistory(employeeId, "checkOut", System.currentTimeMillis())
+                    uiState.postValue(UiState.SUCCESS)
+                }else{
+                    uiState.postValue(UiState.ERROR)
+                    Log.e("checkOut", "Fail : ${res.status}")
+                    Log.e("checkOut", res.toString())
                 }
-            } catch (e: Exception) {
-                Log.e("response face", "Error: ${e.message}", e)
-                uiState.postValue(UiState.ERROR)
-            }
-        }
-    }
-
-    fun recognizePersonFace(file: File) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                val photoPart = MultipartBody.Part.createFormData("photo", file.name, requestFile)
-
-                val collections = "persons".toRequestBody("text/plain".toMediaTypeOrNull())
-
-                val res = webServices.recognizePerson(collections , photoPart)
-
-
-                    Log.e("recognizePersonFace", "Response : ${res.body()?.recognizeFaceResponse?.get(0)?.name}")
-
 
             } catch (e: Exception) {
                 Log.e("response face", "Error: ${e.message}", e)
@@ -136,6 +114,7 @@ class AttendanceViewModel @Inject constructor(
             }
         }
     }
+
 
     fun getAttendanceHistory(id: String?) {
         uiState.postValue(UiState.LOADING)
